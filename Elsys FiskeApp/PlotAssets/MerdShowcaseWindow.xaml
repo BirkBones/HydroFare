@@ -10,9 +10,7 @@
         <StackPanel>
             <local:SinglePlot 
                    
-                  Title="{Binding PlotTitle, UpdateSourceTrigger=PropertyChanged}"
-                  PlotHeight="{Binding PlotHeight, UpdateSourceTrigger=PropertyChanged}"
-                  PlotWidth="{Binding PlotWidth, UpdateSourceTrigger=PropertyChanged}"/>
+                  />
         </StackPanel>
     </Grid>
 </UserControl>
