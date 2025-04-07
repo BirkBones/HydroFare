@@ -6,6 +6,9 @@ using System.Windows;
 using System.Windows.Threading;
 using OxyPlot;
 using OxyPlot.Series;
+using Elsys_FiskeApp.View;
+using Elsys_FiskeApp.ViewModel;
+using OxyPlot.Axes;
 namespace Elsys_FiskeApp
 {
     /// <summary>
@@ -18,83 +21,53 @@ namespace Elsys_FiskeApp
     {
         
         private DispatcherTimer updateTimer;
-        public int updateFrequency = 500;
         public static Random rand = new Random(0);
-        double deltaTime = 0.1f; // Time between each update.
-        public static DispatcherTimer GlobalUpdateTimer { get; private set; } = 
-            new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.1 * 1000) };// Global timer
+        double deltaTime = 0.1f; // Time between each update in seconds.
+        double patchSize = 1;
+        double timePassingFactor = 100000;
+        public static DispatcherTimer GlobalUpdateTimer = new DispatcherTimer();
+        List<DataPoint> points = new List<DataPoint>();
 
-        
         public MainWindow()
         {
             InitializeComponent();
-            GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(deltaTime * 1000);
+            GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(patchSize * deltaTime / timePassingFactor * 1000);
             GlobalUpdateTimer.Start();
+            var vm = (SinglePlotViewModel)skratta.DataContext;
+            DataPoint startpoint = new DataPoint(3, 100) { };
+            vm.setOptions("test", new LinearAxis() {Position = AxisPosition.Bottom  }, "x", "y");
+            points.Add(startpoint);
 
-
-            //skibi
-
-            this.Closed += (s, e) => Application.Current.Shutdown();
-
-            return;
-
-
-
-        }
-
-
-
-        void Testing(string test)
-        {
-            //Showcase1.PlotTitle = "";
-
-            //Showcase1.PlotTitle = "Test";
-
-        }
-
-        PlotModel InitializeSoundPlotModel(double maxVariation)
-        {
-            double startTimeSize = 2f;
-            int startSize = (int)(startTimeSize/deltaTime);
-            LineSeries SoundPlot = new LineSeries
+            GlobalUpdateTimer.Tick += (sender, e) =>
             {
-                Title = "SoundPlot",
-                Color = OxyColors.Blue,
-                MarkerType = MarkerType.None
+                var temp = GenerateRandomPoints(points.Last(), 2);
+                points = Enumerable.Concat(points, temp).ToList();
+                vm.addPoints(temp);
             };
-            DataPoint nextDataPoint = new DataPoint(0, 1);
-            
-            for (int i = 0; i < startSize; i++)
-            {
-                SoundPlot.Points.Add(nextDataPoint);
-                nextDataPoint = GenerateNextPoint(nextDataPoint, maxVariation);
-            }
-            PlotModel SoundModel = new PlotModel();
-            SoundModel.Series.Add(SoundPlot);
-
-            return SoundModel;
+            return;
         }
+
+
 
         
         DataPoint GenerateNextPoint(DataPoint lastPoint, double VariationFactor)
         {
-            double NextSoundVal = lastPoint.Y + rand.NextDouble()*VariationFactor;
+            double NextSoundVal = lastPoint.Y + (rand.NextDouble() - 0.5)*VariationFactor;
             return new DataPoint(lastPoint.X + deltaTime, NextSoundVal);
         }
 
-
-        void UpdateInRealTime(PlotModel model, double VariationFactor)
+        List<DataPoint> GenerateRandomPoints(DataPoint LastPoint, double variationFactor)
         {
-            LineSeries lineSeries = model.Series.First() as LineSeries;
-            DataPoint nextPoint = lineSeries.Points.Last();
-            for (int i = 0; i < 10; i++)
+            List<DataPoint> random = new List<DataPoint>();
+            for (int i = 0; i< patchSize; i++)
             {
-                nextPoint = GenerateNextPoint(nextPoint, VariationFactor);
-                lineSeries.Points.Add(nextPoint);
+                random.Add(GenerateNextPoint(LastPoint, variationFactor));
+                LastPoint = random.Last();
             }
-            model.InvalidatePlot(true);
+            return random;
+        }
+
         }
 
     }
 
-}
