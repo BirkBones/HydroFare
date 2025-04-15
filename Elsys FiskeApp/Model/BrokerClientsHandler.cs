@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MQTTnet;
-using System.Text.Json;
-using System.IO;
-using System.Diagnostics;
+﻿using MQTTnet;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 
 namespace Elsys_FiskeApp
 {
     
     public class BrokerClientsHandler // handles all the clients
     {
-        List<BrokerClient> BrokerClients;
+        Dictionary<string, BrokerClient> BrokerClients;
         public static BrokerClientsHandler Instance;
-        Dictionary<string, Queue<updateData>> inputsDataQueues; // input : name of merd. Output : the input data given from the hydrophone.
-
+        public Dictionary<string, Queue<updateData>> inputsDataQueues; // input : name of merd. Output : the raw input data given from the hydrophone, along with the time the data was recorded.
 
         public ObservableCollection<ClientConnectionSettings> ClientsConnectionSettings;
         public BrokerClientsHandler()
@@ -25,7 +18,7 @@ namespace Elsys_FiskeApp
             if (Instance == null)
             {
                 Instance = this;
-                BrokerClients = new List<BrokerClient>();
+                BrokerClients = new Dictionary<string, BrokerClient>();
                 inputsDataQueues = new Dictionary<string, Queue<updateData>>();
                 LoadClientsConnectionSettings();
                 ClientsConnectionSettings.CollectionChanged += (sender, e) => SaveClientsConnectionSettings();
@@ -34,7 +27,7 @@ namespace Elsys_FiskeApp
                 {
                     var newClient = new BrokerClient();
                     newClient.setBrokerSetttings(clientConnectionSettings);
-                    BrokerClients.Add(newClient);
+                    BrokerClients[clientConnectionSettings.merdName] = newClient;
                     inputsDataQueues.Add(clientConnectionSettings.merdName, newClient.inputData);
                 }
 

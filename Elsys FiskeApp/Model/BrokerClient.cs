@@ -10,6 +10,8 @@ using System.Threading;
 using System;
 using System.Net;
 using System.Text.Json;
+using System.Numerics;
+using Elsys_FiskeApp;
 
 namespace MQTTnet;
 
@@ -65,7 +67,7 @@ public class BrokerClient
             .Build();
 
         await brokerClient.SubscribeAsync(subOptions, token);
-        Console.WriteLine($"MQTT client subscribed to topic '{topic}' with QoS {qos}.");
+        Console.WriteLine($"MQTT client '{brokerName}' subscribed to topic '{topic}' with QoS {qos}.");
     }
 
     public async Task UnSubscribe(string topic, CancellationToken token)
@@ -74,7 +76,7 @@ public class BrokerClient
         WithTopicFilter(topic).Build();
 
         await brokerClient.UnsubscribeAsync(unSubOptions, token);
-        Console.WriteLine($"MQTT client unsubscribed from topic '{topic}'.");
+        Console.WriteLine($"MQTT client '{brokerName}' unsubscribed from topic '{topic}'.");
     }
     public async Task PublishMessage(string topic, string Message, MqttQualityOfServiceLevel QOSL)
     {
@@ -97,9 +99,32 @@ public class BrokerClient
 
     private Task HandleMessageReceived(MqttApplicationMessageReceivedEventArgs e)
     {
-        var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+        string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
         Console.WriteLine($"Received message on topic '{e.ApplicationMessage.Topic}': {payload}");
+        if (e.ApplicationMessage.Topic == "rawData") // Uploads the data to the inputdata queue.
+        {
+            var inputList = interpretInput(payload);
+            inputList.ForEach(input => inputData.Enqueue(input));
+        }
+
+
         return Task.CompletedTask;
+    }
+
+    List<Elsys_FiskeApp.updateData> interpretInput(string input) // currently assumes format "(x1,y1), (x2, y2), ..."
+    {
+        var totalInput = input // totalInput consists of multiple updatedata gathered over time.
+            .Split(new[] { "), " }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(p =>
+            {
+                var trimmed = p.Trim('(', ')');
+                var parts = trimmed.Split(',');
+                var inputData = new updateData { Time = float.Parse(parts[0]), RawData = float.Parse(parts[1]) };
+                return inputData;
+            })
+            .ToList();
+        return totalInput;
+      
     }
 
 
