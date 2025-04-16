@@ -1,0 +1,47 @@
+[
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Trondheim Fjord"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Stokkoya, Merd 2"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Stokkoya, Merd 3"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Geitanger, Merd 1"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Geitanger, Merd 2"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Geitanger, Merd 3"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Fisketorget, merd 1"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Fisketorget, merd 2"
+  },
+  {
+    "port": 1883,
+    "ip": "10.22.174.88",
+    "merdName": "Fisketorget, merd 3"
+  }
+]
