@@ -33,18 +33,9 @@ namespace Elsys_FiskeApp
             InitializeComponent();
             GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(patchSize * deltaTime / timePassingFactor * 1000);
             GlobalUpdateTimer.Start();
-            var vm = (SinglePlotViewModel)skratta.DataContext;
-            DataPoint startpoint = new DataPoint(3, 100) { };
-            vm.setOptions("test", new LinearAxis() {Position = AxisPosition.Bottom  }, "x", "y");
-            points.Add(startpoint);
-
-            GlobalUpdateTimer.Tick += (sender, e) =>
-            {
-                var temp = GenerateRandomPoints(points.Last(), 2);
-                points = Enumerable.Concat(points, temp).ToList();
-                vm.addPoints(temp);
-            };
-            return;
+            var vm = (SingleMerdViewModel)skratta.DataContext;
+            
+            return; 
         }
 
 

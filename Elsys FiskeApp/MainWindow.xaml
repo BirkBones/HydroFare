@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-                <elsys:SinglePlotView x:Name="skratta"></elsys:SinglePlotView>
+                <elsys:SingleMerdView x:Name="skratta"></elsys:SingleMerdView>
 
 
 
