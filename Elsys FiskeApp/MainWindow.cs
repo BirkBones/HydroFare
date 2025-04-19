@@ -9,6 +9,9 @@ using OxyPlot.Series;
 using Elsys_FiskeApp.View;
 using Elsys_FiskeApp.ViewModel;
 using OxyPlot.Axes;
+using Elsys_FiskeApp.Model;
+using MQTTnet.Protocol;
+
 namespace Elsys_FiskeApp
 {
     /// <summary>
@@ -20,45 +23,32 @@ namespace Elsys_FiskeApp
     public partial class MainWindow : Window
     {
         
-        private DispatcherTimer updateTimer;
-        public static Random rand = new Random(0);
-        double deltaTime = 0.1f; // Time between each update in seconds.
-        double patchSize = 1;
-        double timePassingFactor = 100000;
         public static DispatcherTimer GlobalUpdateTimer = new DispatcherTimer();
-        List<DataPoint> points = new List<DataPoint>();
-
+        DataHolder dataHolder = new DataHolder();
+        BrokerClientsHandler brokerClientsHandler;
+        SingleMerdViewModel merdViewModel;
         public MainWindow()
         {
             InitializeComponent();
-            GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(patchSize * deltaTime / timePassingFactor * 1000);
-            GlobalUpdateTimer.Start();
-            var vm = (SingleMerdViewModel)skratta.DataContext;
+            InitializeAsync();
             
             return; 
         }
-
-
-
-        
-        DataPoint GenerateNextPoint(DataPoint lastPoint, double VariationFactor)
+        async void InitializeAsync()
         {
-            double NextSoundVal = lastPoint.Y + (rand.NextDouble() - 0.5)*VariationFactor;
-            return new DataPoint(lastPoint.X + deltaTime, NextSoundVal);
-        }
-
-        List<DataPoint> GenerateRandomPoints(DataPoint LastPoint, double variationFactor)
-        {
-            List<DataPoint> random = new List<DataPoint>();
-            for (int i = 0; i< patchSize; i++)
+            await Task.Run(() =>
             {
-                random.Add(GenerateNextPoint(LastPoint, variationFactor));
-                LastPoint = random.Last();
-            }
-            return random;
-        }
+                brokerClientsHandler = new BrokerClientsHandler();
+            });
+
+            await brokerClientsHandler.BrokerClients["Merd1"].Subscribe("rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
+            GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
+            GlobalUpdateTimer.Start();
+            merdViewModel = (SingleMerdViewModel)firstMerd.DataContext;
 
         }
+
+    }
 
     }
 

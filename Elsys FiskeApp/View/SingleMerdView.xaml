@@ -26,7 +26,6 @@
 
         <local:SinglePlotView Grid.Row="0" Grid.Column="2"
                       DataContext="{Binding FourierPlotViewModel}" />
-        <TextBox x:Name="InputX" Grid.Row="1">  </TextBox>
 
 
 

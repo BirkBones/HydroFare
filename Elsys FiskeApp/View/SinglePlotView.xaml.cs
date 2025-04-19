@@ -13,7 +13,7 @@ namespace Elsys_FiskeApp.View
         public SinglePlotView()
         {
             InitializeComponent();
-            DataContext = new ViewModel.SinglePlotViewModel();
+            DataContext = new SinglePlotViewModel();
         }
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {

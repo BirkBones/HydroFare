@@ -15,7 +15,7 @@ namespace Elsys_FiskeApp.Model
         public Dictionary<string, Queue<updateData>> newProcessedData; // input : name of merd. Output : the (new) raw input data, the fourier transform and the treated signal.
         public Dictionary<string, List<updateData>> totalProcessedData; // the same, but holds all accumulated data during runtime.
         
-        public static DispatcherTimer GlobalUpdateTimer { get; private set; } =
+        public DispatcherTimer GlobalUpdateTimer { get; private set; } =
                     new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(2000) };// Global timer
         public DataHolder() 
         {

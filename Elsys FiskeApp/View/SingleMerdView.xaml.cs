@@ -14,5 +14,6 @@ namespace Elsys_FiskeApp.View
             InitializeComponent();
             DataContext = new SingleMerdViewModel();
         }
+       
     }
 }

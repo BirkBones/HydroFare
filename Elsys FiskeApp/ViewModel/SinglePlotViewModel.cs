@@ -64,31 +64,50 @@ namespace Elsys_FiskeApp.ViewModel
             plottingModel.InvalidatePlot(true);
 
         }
-
-        public SinglePlotViewModel() 
+        public SinglePlotViewModel()
         {
             plottingModel = new PlotModel();
-            plottedData = new LineSeries();
+            plottedData = new LineSeries { XAxisKey = "xAxis", YAxisKey = "yAxis" };
             plottingModel.Series.Add(plottedData);
-            
+        }
+        public SinglePlotViewModel(string plotTitle, Axis xAxisType, string xAxesName, string yAxesName)
+        {
+            plottingModel = new PlotModel();
+            // Initializing things for the first time
+
+            setOptions(plotTitle, xAxisType, xAxesName, yAxesName);
+            plottedData = new LineSeries { XAxisKey = "xAxis", YAxisKey = "yAxis" };
+            plottingModel.Series.Add(plottedData);
+
         }
         public void setOptions(string title, Axis xAxisType, string xAxesName, string yAxesName)
         {
             plottingModel.Title = title;
+            plottingModel.Axes.Clear();
 
+            xAxisType.Title = xAxesName;
             plottingModel.Axes.Add(xAxisType);
-            plottingModel.Axes[0].Title = xAxesName;
 
-            plottingModel.Axes.Add(new LinearAxis() {Position = AxisPosition.Left });
-            plottingModel.Axes[1].Title = yAxesName;
-
-
+            var yAxis = new LinearAxis { Position = AxisPosition.Left, Key = "yAxis", Title = yAxesName };
+            plottingModel.Axes.Add(yAxis);
+ 
         }
+
         public void addPoints(List<DataPoint> points)
         {
             for (int i = 0; i < points.Count; i++)
             {
                 plottedData.Points.Add(points.ElementAt(i));
+
+            }
+            plottingModel.InvalidatePlot(true);
+            updateAxesLimits();
+        }
+        public void addPoints(Queue<DataPoint> points)
+        {
+            while (points.Count > 0) 
+            {
+                plottedData.Points.Add(points.Dequeue());
 
             }
             plottingModel.InvalidatePlot(true);
@@ -103,35 +122,31 @@ namespace Elsys_FiskeApp.ViewModel
 
         private void updateAxesLimits()
         {
-            double Ymax = plottedData.Points.Max(point => point.Y); // Check which dimensions the plot at least has to be within
-            double Ymin = plottedData.Points.Min(point => point.Y);
-            double Xmax = plottedData.Points.Max(point => point.X);
-            double Xmin = plottedData.Points.Min(point => point.X);
-            plottingModel.Axes[1].Minimum = Ymin;
-            plottingModel.Axes[1].Maximum = Ymax;
-            if (plottingModel.Axes[0]  is (LinearAxis or TimeSpanAxis)) // the only difference between how the plot should be scaled, is whether or not we are dealing in real-time or the frequency domain on the x-axes
+            if (plottedData.Points.Count > 0)
             {
-                // For the moment this scales up gradually when the program is started, then has constant size when it has achieved the correct size for the xAxes.
-                plottingModel.Axes[0].Minimum = Math.Max(Xmax - expectedRelevantTimeArea*1.05, Xmin);
-                plottingModel.Axes[0].Maximum = Xmax + expectedRelevantTimeArea * 0.05;
+                double Ymax = plottedData.Points.Max(point => point.Y); // Check which dimensions the plot at least has to be within
+                double Ymin = plottedData.Points.Min(point => point.Y);
+                double Xmax = plottedData.Points.Max(point => point.X);
+                double Xmin = plottedData.Points.Min(point => point.X);
+                plottingModel.Axes[1].Minimum = Ymin;
+                plottingModel.Axes[1].Maximum = Ymax;
+                if (plottingModel.Axes[0] is LinearAxis || plottingModel.Axes[0] is TimeSpanAxis) // the only difference between how the plot should be scaled, is whether or not we are dealing in real-time or the frequency domain on the x-axes
+                {
+                    // For the moment this scales up gradually when the program is started, then has constant size when it has achieved the correct size for the xAxes.
+                    plottingModel.Axes[0].Minimum = Math.Max(Xmax - expectedRelevantTimeArea * 1.05, Xmin);
+                    plottingModel.Axes[0].Maximum = Xmax + expectedRelevantTimeArea * 0.05;
 
 
+                }
+                if (plottingModel.Axes[0] is LogarithmicAxis)
+                {
+                    plottingModel.Axes[0].Minimum = Xmin - (Xmax - Xmin) * 0.1;
+                    plottingModel.Axes[0].Maximum = Xmax + (Xmax - Xmin) * 0.1;
+
+                }
+                plottingModel.InvalidatePlot(true);
             }
-            if (plottingModel.Axes[0] is LogarithmicAxis)
-            {
-                plottingModel.Axes[0].Minimum = Xmin - (Xmax - Xmin) * 0.1;
-                plottingModel.Axes[0].Maximum = Xmax + (Xmax - Xmin) * 0.1;
-
-            }
-            plottingModel.InvalidatePlot(true);
-            
         }
-
-
-
-
-
-
 
     }
 }

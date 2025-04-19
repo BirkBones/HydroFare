@@ -8,7 +8,7 @@ namespace Elsys_FiskeApp
     
     public class BrokerClientsHandler // handles all the clients
     {
-        Dictionary<string, BrokerClient> BrokerClients;
+        public Dictionary<string, BrokerClient> BrokerClients;
         public static BrokerClientsHandler Instance;
         public Dictionary<string, Queue<updateData>> inputsDataQueues; // input : name of merd. Output : the raw input data given from the hydrophone, along with the time the data was recorded.
 
@@ -25,13 +25,12 @@ namespace Elsys_FiskeApp
 
                 foreach (var clientConnectionSettings in ClientsConnectionSettings) // Creates and setups brokers and ties input data to the dict.
                 {
-                    var newClient = new BrokerClient();
-                    newClient.setBrokerSetttings(clientConnectionSettings);
+                    var newClient = new BrokerClient(clientConnectionSettings); // Initializes connectionsettings of broker, and attempts to connect.
                     BrokerClients[clientConnectionSettings.merdName] = newClient;
                     inputsDataQueues.Add(clientConnectionSettings.merdName, newClient.inputData);
                 }
 
-                ConnectAllBrokerClients();
+                //ConnectAllBrokerClients();
 
             }
 
@@ -40,7 +39,7 @@ namespace Elsys_FiskeApp
         public async Task ConnectAllBrokerClients()
         {
             List<Task> tasks = new List<Task>();
-            foreach (var client in BrokerClients)
+            foreach (var client in BrokerClients.Values)
             {
                 tasks.Add(client.ConnectToBroker(CancellationToken.None));
             }

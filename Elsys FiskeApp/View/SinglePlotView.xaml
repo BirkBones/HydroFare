@@ -16,8 +16,7 @@
 
         <!-- The Model variable decides how and what the plotview shows. The plotview is front end, the model is backend. -->
         <OxyPlot:PlotView x:Name="plotWindowView" OxyPlot:Model="{Binding plottingModel, UpdateSourceTrigger=PropertyChanged}"
-                          Height="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"
-                          />
+                          Height="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" />
 
 
     </Grid>

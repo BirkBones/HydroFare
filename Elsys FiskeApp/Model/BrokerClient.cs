@@ -12,6 +12,8 @@ using System.Net;
 using System.Text.Json;
 using System.Numerics;
 using Elsys_FiskeApp;
+using System.Diagnostics;
+using MQTTnet.Exceptions;
 
 namespace MQTTnet;
 
@@ -22,15 +24,21 @@ public class BrokerClient
     public string brokerName;
     string ip;
     int port;
+    public bool isConnected { get { return brokerClient.IsConnected; } }
     public Queue<Elsys_FiskeApp.updateData> inputData; // Contains all input for the given brokerclient.
 
-
+    public BrokerClient(ClientConnectionSettings settings)
+    {
+        setBrokerSetttings(settings);
+        ConnectToBroker(CancellationToken.None);
+        inputData = new Queue<updateData>();
+    }
     ~BrokerClient()
     {
         DisconnectFromBroker();
     }
 
-    public void setBrokerSetttings(Elsys_FiskeApp.ClientConnectionSettings settings)
+    public void setBrokerSetttings(ClientConnectionSettings settings)
     {
         brokerName = settings.merdName;
         ip = settings.ip;
@@ -42,15 +50,37 @@ public class BrokerClient
         MqttClientFactory mqttFactory = new MqttClientFactory();
         brokerClient = mqttFactory.CreateMqttClient();
         var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(ip, port).Build();
-        MqttClientConnectResult result = await brokerClient.ConnectAsync(mqttClientOptions, token);
-        if (result.ResultCode == MqttClientConnectResultCode.Success)
+
+
+        try
         {
-            brokerClient.ApplicationMessageReceivedAsync -= HandleMessageReceived;
-            brokerClient.ApplicationMessageReceivedAsync += HandleMessageReceived;
+            MqttClientConnectResult result = await brokerClient.ConnectAsync(mqttClientOptions, token);
+            if (result.ResultCode == MqttClientConnectResultCode.Success)
+            {
+                brokerClient.ApplicationMessageReceivedAsync -= HandleMessageReceived;
+                brokerClient.ApplicationMessageReceivedAsync += HandleMessageReceived;
+                brokerClient.DisconnectedAsync += HandleDisconnected;
+                Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was successful!");
+            }
+            else
+            {
+                brokerClient.DisconnectedAsync -= HandleDisconnected;
+
+                Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was unsuccessful. Reason: " + result.ReasonString);
+            }
+        }
+        catch (MqttCommunicationException ex)
+        {
+            Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was unsuccessful. Reason: " + ex.Message);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was unsuccessful. Reason: " + ex.Message);
         }
 
     }
-
+    
     public async Task DisconnectFromBroker()
     {
         await brokerClient.DisconnectAsync(new MqttClientDisconnectOptionsBuilder()
@@ -67,16 +97,16 @@ public class BrokerClient
             .Build();
 
         await brokerClient.SubscribeAsync(subOptions, token);
-        Console.WriteLine($"MQTT client '{brokerName}' subscribed to topic '{topic}' with QoS {qos}.");
+        Debug.WriteLine($"MQTT client '{brokerName}' subscribed to topic '{topic}' with QoS {qos}.");
     }
 
     public async Task UnSubscribe(string topic, CancellationToken token)
     {
         MqttClientUnsubscribeOptions unSubOptions = new MqttClientUnsubscribeOptionsBuilder().
         WithTopicFilter(topic).Build();
-
+        
         await brokerClient.UnsubscribeAsync(unSubOptions, token);
-        Console.WriteLine($"MQTT client '{brokerName}' unsubscribed from topic '{topic}'.");
+        Debug.WriteLine($"MQTT client '{brokerName}' unsubscribed from topic '{topic}'.");
     }
     public async Task PublishMessage(string topic, string Message, MqttQualityOfServiceLevel QOSL)
     {
@@ -100,7 +130,7 @@ public class BrokerClient
     private Task HandleMessageReceived(MqttApplicationMessageReceivedEventArgs e)
     {
         string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-        Console.WriteLine($"Received message on topic '{e.ApplicationMessage.Topic}': {payload}");
+        Debug.WriteLine($"Received message on topic '{e.ApplicationMessage.Topic}': {payload}");
         if (e.ApplicationMessage.Topic == "rawData") // Uploads the data to the inputdata queue.
         {
             var inputList = interpretInput(payload);
@@ -111,7 +141,13 @@ public class BrokerClient
         return Task.CompletedTask;
     }
 
-    List<Elsys_FiskeApp.updateData> interpretInput(string input) // currently assumes format "(x1,y1), (x2, y2), ..."
+    private async Task HandleDisconnected(MqttClientDisconnectedEventArgs e)
+    {
+        Debug.WriteLine("Broker named: " + brokerName + " on IP " + ip + " and port " + port + " was disconnected. Reason : " + e.Reason);
+        await Task.CompletedTask;
+    }
+
+    List<updateData> interpretInput(string input) // currently assumes format "(x1,y1), (x2, y2), ..."
     {
         var totalInput = input // totalInput consists of multiple updatedata gathered over time.
             .Split(new[] { "), " }, StringSplitOptions.RemoveEmptyEntries)
