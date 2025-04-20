@@ -26,7 +26,7 @@ namespace Elsys_FiskeApp
         public static DispatcherTimer GlobalUpdateTimer = new DispatcherTimer();
         DataHolder dataHolder = new DataHolder();
         BrokerClientsHandler brokerClientsHandler;
-        SingleMerdViewModel merdViewModel;
+        public SingleMerdViewModel merdViewModel;
         public MainWindow()
         {
             InitializeComponent();
@@ -45,7 +45,7 @@ namespace Elsys_FiskeApp
             GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
             GlobalUpdateTimer.Start();
             merdViewModel = (SingleMerdViewModel)firstMerd.DataContext;
-
+            merdViewModel.Test();
         }
 
     }

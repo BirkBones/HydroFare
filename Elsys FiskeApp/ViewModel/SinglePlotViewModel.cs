@@ -66,7 +66,7 @@ namespace Elsys_FiskeApp.ViewModel
         }
         public SinglePlotViewModel()
         {
-            plottingModel = new PlotModel();
+            plottingModel = new PlotModel() { DefaultFont = "Times New Roman", TitleFont = "Times New Roman" };
             plottedData = new LineSeries { XAxisKey = "xAxis", YAxisKey = "yAxis" };
             plottingModel.Series.Add(plottedData);
         }

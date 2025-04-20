@@ -60,8 +60,8 @@ namespace Elsys_FiskeApp.Model
         private updateData processData(updateData rawInput)
         {
             // Do things with the data here.
-            rawInput.FourierData = rawInput.RawData; // temporary solution so they're not null.
-            rawInput.TreatedSignal = rawInput.RawData;
+            rawInput.FourierData = rawInput.RawData*rawInput.RawData*rawInput.RawData; // temporary solution so they're not null.
+            rawInput.TreatedSignal = -rawInput.RawData * rawInput.RawData;
             return rawInput;
         }
     }

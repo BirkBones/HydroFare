@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Elsys_FiskeApp
+namespace Elsys_FiskeApp.ViewModel
 {
-    internal class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged
         {
@@ -19,7 +19,7 @@ namespace Elsys_FiskeApp
         Action<object> execute;
         Func<object, bool> canExecute;
 
-        public RelayCommand(Action<object> _execute, Func<object,bool> _canExecute){
+        public RelayCommand(Action<object> _execute, Func<object,bool> _canExecute = null){
             execute = _execute;
             canExecute = _canExecute;
 
