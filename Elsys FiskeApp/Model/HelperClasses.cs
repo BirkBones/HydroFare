@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Elsys_FiskeApp
+﻿namespace Elsys_FiskeApp
 {
     public struct Tuple<T1, T2>
     {
@@ -21,13 +15,22 @@ namespace Elsys_FiskeApp
         public float Time;
         public updateData(float treatedSignal, float fourierData, float rawData, float time) { TreatedSignal = treatedSignal; FourierData = fourierData; RawData = rawData; Time = time; }
     }
-    public record struct ClientConnectionSettings
+
+public struct MerdSettings
     {
-        public int port { get; set; }
+        public string Ip { set; get; }
+        public int Port { set; get; }
+        public string MerdName { set; get; }
+        public float Height { set; get; }
+        public float Radius { set; get; }
 
-        public string ip { get; set; }
-        public string merdName { get; set; }
+        public MerdSettings(string ip, int port, string merdName, float radius, float height)
+        {
+            Ip = ip; Port = port; MerdName = merdName; Radius = radius; Height = height; 
 
-        public ClientConnectionSettings(string ip, int port, string merdName) { this.ip = ip; this.port = port; this.merdName = merdName; }
+        }
+
+        public MerdSettings() { } // Needed for deserialization
     }
+
 }

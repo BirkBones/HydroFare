@@ -39,7 +39,7 @@
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 15">
                     <Button Content="Reconnect" Width="130" Margin="10" Command="{Binding ReconnectCommand}" IsEnabled="True" />
-                    <Button Content="Edit Connection" Width="150" Margin="10" Command="{Binding EditConnectionCommand}" />
+                  
                 </StackPanel>
 
                 <!-- Position Input -->

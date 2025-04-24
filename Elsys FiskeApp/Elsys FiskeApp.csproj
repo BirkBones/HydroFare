@@ -11,6 +11,13 @@
 
   <ItemGroup>
     <None Remove="Model\ClientConnectionSettings.json" />
+    <None Remove="Model\ClientsConnectionSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MerdsSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -24,12 +31,6 @@
   <ItemGroup>
     <Folder Include="ViewModel\" />
     <Folder Include="View\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Model\ClientsConnectionSettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

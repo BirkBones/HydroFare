@@ -33,9 +33,9 @@ namespace Elsys_FiskeApp.Model
 
         void UpdateProcessedData() // transfers data from the raw input queue in brokerclientshandler, to the processed data here.
         {
-            foreach (var key in BrokerClientsHandler.Instance.inputsDataQueues.Keys)
+            foreach (var key in MerdsHandler.Instance.inputsDataQueues.Keys)
             {
-                var inputQueue = BrokerClientsHandler.Instance.inputsDataQueues[key];
+                var inputQueue = MerdsHandler.Instance.inputsDataQueues[key];
                 if (!newProcessedData.ContainsKey(key) || !totalProcessedData.ContainsKey(key))
                 {
                     newProcessedData[key] = new Queue<updateData>();

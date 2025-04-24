@@ -13,7 +13,6 @@ namespace Elsys_FiskeApp.View
         {
 
             InitializeComponent();
-            DataContext = new SingleMerdViewModel();
         }
 
         private void isInputValidNumber(object sender, TextCompositionEventArgs e)

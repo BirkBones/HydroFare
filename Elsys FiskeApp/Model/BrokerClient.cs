@@ -16,6 +16,7 @@ using System.Diagnostics;
 using MQTTnet.Exceptions;
 using System.Data;
 using System.Windows.Input;
+using Elsys_FiskeApp.Model;
 
 namespace MQTTnet;
 
@@ -24,59 +25,60 @@ public class BrokerClient : ViewModelBase
 
     public IMqttClient brokerClient;
     public string brokerName;
-    string ip;
+    public string ip { get; set; }
     int port;
 
     public event Action? ConnectionStateChanged;
 
-    private bool _isConnected = false;
+    public MqttClientConnectionStatus _connectionStatus { set;  get; } = MqttClientConnectionStatus.Disconnected;
 
-    public bool IsConnected
+    public MqttClientConnectionStatus ConnectionStatus
     {
-        get { return _isConnected; }
-        set { _isConnected = value; OnPropertyChanged();
-            ConnectionStateChanged?.Invoke();
-        }  
-    }
+        set { _connectionStatus = value; ConnectionStateChanged?.Invoke(); }
+        get { return _connectionStatus; }
+    } 
 
-    private bool _isConnecting = false;
-
-    public bool IsConnecting
-    {
-        get { return _isConnecting; }
-        set { _isConnecting = value;
-            OnPropertyChanged();
-            ConnectionStateChanged?.Invoke();
-           
-        }
-    }
+    public CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     public Queue<Elsys_FiskeApp.updateData> inputData; // Contains all input for the given brokerclient.
 
-    public BrokerClient(ClientConnectionSettings settings)
+    public BrokerClient(MerdSettings settings)
     {
         setBrokerSetttings(settings);
-        ConnectToBroker(CancellationToken.None);
+        ConnectToBroker();
         inputData = new Queue<updateData>();
+        
     }
-    ~BrokerClient()
+    ~BrokerClient() // should fix this to implement idisposable, so it actually waits for it to disconnect.
     {
         DisconnectFromBroker();
     }
 
-    public void setBrokerSetttings(ClientConnectionSettings settings)
+    public void setBrokerSetttings(MerdSettings settings)
     {
-        brokerName = settings.merdName;
-        ip = settings.ip;
-        port = settings.port;
-    }
-    public async Task ConnectToBroker(CancellationToken token) // Returns the result of the connection
-    {
-        IsConnecting = true;
+        brokerName = settings.MerdName; 
+        ip = settings.Ip;
+        port = settings.Port;
 
+    }
+
+    public async Task AbortConnectionAttempt()
+    {
+        await Task.Run(()=>cancellationTokenSource.Cancel()); // if there is one, cancels the ongoing connection attempt.
+        cancellationTokenSource = new CancellationTokenSource();
+    }
+    public async Task ConnectToBroker() // Returns the result of the connection
+    {
+
+        if (ConnectionStatus == MqttClientConnectionStatus.Connecting) await AbortConnectionAttempt(); // if there is one, cancels the ongoing connection attempt.
+        var token = cancellationTokenSource.Token;
         MqttClientFactory mqttFactory = new MqttClientFactory();
         brokerClient = mqttFactory.CreateMqttClient();
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(ip, port).Build();
+        brokerClient.DisconnectedAsync += async e => { ConnectionStatus = MqttClientConnectionStatus.Disconnected; };
+        brokerClient.ConnectedAsync += async e => { ConnectionStatus = MqttClientConnectionStatus.Connected; };
+        brokerClient.ConnectingAsync += async e => { ConnectionStatus = MqttClientConnectionStatus.Connecting; };
+
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(ip, port).Build(); // idk really know for sure right now that the ongoing connection attempt has had the time to be canceled.
 
 
         try
@@ -88,7 +90,7 @@ public class BrokerClient : ViewModelBase
                 brokerClient.ApplicationMessageReceivedAsync += HandleMessageReceived;
                 brokerClient.DisconnectedAsync += HandleDisconnected;
                 Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was successful!");
-                IsConnected = true;
+                return;
 
             }
             else
@@ -101,13 +103,16 @@ public class BrokerClient : ViewModelBase
         catch (MqttCommunicationException ex)
         {
             Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was unsuccessful. Reason: " + ex.Message);
+            brokerClient.DisconnectedAsync -= HandleDisconnected;
+
 
         }
         catch (Exception ex)
         {
             Debug.WriteLine("Connection of broker: " + brokerName + " to IP " + ip + " on port " + port + " was unsuccessful. Reason: " + ex.Message);
+            brokerClient.DisconnectedAsync -= HandleDisconnected;
+
         }
-        IsConnecting = false;
     }
     
     public async Task DisconnectFromBroker()
@@ -121,7 +126,7 @@ public class BrokerClient : ViewModelBase
 
     public async Task Subscribe(string topic, MqttQualityOfServiceLevel qos, CancellationToken token)
     {
-        if (brokerClient.IsConnected)
+        if (ConnectionStatus == MqttClientConnectionStatus.Connected)
         {
             var subOptions = new MqttClientSubscribeOptionsBuilder()
                 .WithTopicFilter(f => f.WithTopic(topic).WithQualityOfServiceLevel(qos))
@@ -171,9 +176,7 @@ public class BrokerClient : ViewModelBase
 
     private async Task HandleDisconnected(MqttClientDisconnectedEventArgs e)
     {
-        Debug.WriteLine("Broker named: " + brokerName + " on IP " + ip + " and port " + port + " was disconnected. Reason : " + e.Reason);
-        IsConnected = false;
-        //System.Diagnostics.Debugger.Break();
+        Debug.WriteLine("BrokerClient named: " + brokerName + " on IP " + ip + " and port " + port + " was disconnected. Reason : " + e.Reason);
         await Task.CompletedTask;
     }
 
