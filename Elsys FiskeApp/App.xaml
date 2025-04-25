@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:Elsys_FiskeApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Color x:Key="BackgroundColor">#0D1B2A</Color>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     </Application.Resources>
+
 </Application>

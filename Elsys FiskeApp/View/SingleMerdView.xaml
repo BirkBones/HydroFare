@@ -6,55 +6,186 @@
              xmlns:local="clr-namespace:Elsys_FiskeApp.View"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200"
-             Background="#0D1B2A">
+             Background="{DynamicResource BackgroundBrush}"
+>
+
+    <UserControl.Resources>
+        <!-- Color Palette -->
+        <Color x:Key="BackgroundColor">#0D1B2A</Color>
+        <Color x:Key="PrimaryBorderColor">#3A506B</Color>
+        <Color x:Key="InputBackgroundColor">#1F2A38</Color>
+        <Color x:Key="ButtonBackgroundColor">#3A506B</Color>
+        <Color x:Key="ButtonBorderColor">#5BC0BE</Color>
+        <Color x:Key="InfoPanelBackgroundColor">#132743</Color>
+
+        <Color x:Key="TextColor">White</Color>
+        <Color x:Key="ConnectionStatusColor">LightGreen</Color>
+        <Color x:Key="WellbeingStatusColor">LightBlue</Color>
+        <Color x:Key="PositionColor">LimeGreen</Color>
+
+        <!-- Brushes -->
+        <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+        <SolidColorBrush x:Key="PrimaryBorderBrush" Color="{StaticResource PrimaryBorderColor}"/>
+        <SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource InputBackgroundColor}"/>
+        <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="{StaticResource ButtonBackgroundColor}"/>
+        <SolidColorBrush x:Key="ButtonBorderBrush" Color="{StaticResource ButtonBorderColor}"/>
+        <SolidColorBrush x:Key="InfoPanelBackgroundBrush" Color="{StaticResource InfoPanelBackgroundColor}"/>
+
+        <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+        <SolidColorBrush x:Key="ConnectionStatusBrush" Color="{StaticResource ConnectionStatusColor}"/>
+        <SolidColorBrush x:Key="WellbeingStatusBrush" Color="{StaticResource WellbeingStatusColor}"/>
+        <SolidColorBrush x:Key="PositionBrush" Color="{StaticResource PositionColor}"/>
+        <SolidColorBrush x:Key="LightTextBrush" Color="#B0BEC5"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="LightGreen"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="LightBlue"/>
+
+        <!-- Default Styles -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe U"/>
+            <Setter Property="Background" Value="{StaticResource InputBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Background" Value="{StaticResource ButtonBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="1.2*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1.3*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        
 
-        <!-- Plots -->
-        <local:SinglePlotView Grid.Row="0" Grid.Column="0" DataContext="{Binding TrendPlotViewModel}" Margin="5"/>
-        <local:SinglePlotView Grid.Row="0" Grid.Column="1" DataContext="{Binding RawPlotViewModel}" Margin="5"/>
-        <local:SinglePlotView Grid.Row="0" Grid.Column="2" DataContext="{Binding FourierPlotViewModel}" Margin="5"/>
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
+                   Text="{Binding MerdName}" 
+                   FontSize="32" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0 0 0 20"/>
+
+        <!-- Plot Section -->
+        <Border Grid.Row="1" Grid.ColumnSpan="3" 
+                BorderBrush="{StaticResource PrimaryBorderBrush}" 
+                BorderThickness="1" 
+                CornerRadius="10" 
+                Padding="15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <local:SinglePlotView Grid.Column="0" DataContext="{Binding TrendPlotViewModel}" Margin="10"/>
+                <local:SinglePlotView Grid.Column="1" DataContext="{Binding RawPlotViewModel}" Margin="10"/>
+                <local:SinglePlotView Grid.Column="2" DataContext="{Binding FourierPlotViewModel}" Margin="10"/>
+            </Grid>
+        </Border>
 
         <!-- Info Panel -->
-        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="#132743" CornerRadius="15" Padding="30" Margin="10">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Width="800" >
+        <Border Grid.Row="2" Grid.ColumnSpan="3" 
+                Background="{StaticResource InfoPanelBackgroundBrush}" 
+                BorderBrush="{StaticResource PrimaryBorderBrush}" 
+                BorderThickness="1" 
+                CornerRadius="12" 
+                Padding="30" 
+                Margin="0,20,0,10">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
 
-                <!-- Status -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 15">
-                    <TextBlock Text="Connection:" Foreground="White" FontSize="16" Margin="0 0 10 0"/>
-                    <TextBlock Text="{Binding ConnectionStatus, UpdateSourceTrigger=PropertyChanged}"  Foreground="LightGreen" FontSize="16" Margin="0 30 40 0"/>
-                    <TextBlock Text="Wellbeing:" Foreground="White" FontSize="16" Margin="0 0 10 0"/>
-                    <TextBlock Text="{Binding WellbeingStatus}" Foreground="LightBlue" FontSize="16"/>
+                <!-- Status Line -->
+                <Grid HorizontalAlignment="Center" Margin="0 0 0 20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Connection:" 
+               Foreground="{StaticResource LightTextBrush}" 
+               FontSize="16" 
+               VerticalAlignment="Center" 
+               Margin="0 0 8 0" 
+               FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding ConnectionStatus}" 
+               Foreground="{StaticResource SuccessBrush}" 
+               FontSize="16" 
+               VerticalAlignment="Center" 
+               FontWeight="Bold"
+               Grid.Column="1"/>
+
+                    <TextBlock Grid.Column="2"/>
+
+                    <TextBlock Text="Wellbeing:" 
+               Foreground="{StaticResource LightTextBrush}" 
+               FontSize="16" 
+               VerticalAlignment="Center" 
+               Margin="0 0 8 0" 
+               Grid.Column="3"
+               FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding WellbeingStatus}" 
+               Foreground="{StaticResource InfoBrush}" 
+               FontSize="16" 
+               VerticalAlignment="Center" 
+               FontWeight="Bold"
+               Grid.Column="4"/>
+                </Grid>
+
+
+                <!-- Reconnect -->
+                <Button Content="Reconnect" Width="120" Margin="0 0 0 20" Command="{Binding ReconnectCommand}" HorizontalAlignment="Center"/>
+
+                <!-- Actual Position -->
+                <TextBlock Text="Actual Hydrophone Position:" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding ActualHydrophonePosition}" Foreground="{StaticResource PositionBrush}" FontSize="14" HorizontalAlignment="Center" Margin="0 5 0 20"/>
+
+                <!-- Target Inputs -->
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                    <TextBlock Text="Target Hydrophone Position (X, Y, Z):" FontSize="14" HorizontalAlignment="Center" Margin="0 0 5 5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox Text="{Binding HydrophoneX, UpdateSourceTrigger=PropertyChanged}" 
+                                 PreviewTextInput="isInputValidNumber" Width="60" Height="30" Margin="5"/>
+                        <TextBox Text="{Binding HydrophoneY, UpdateSourceTrigger=PropertyChanged}" 
+                                 PreviewTextInput="isInputValidNumber" Width="60" Height="30" Margin="5"/>
+                        <TextBox Text="{Binding HydrophoneZ, UpdateSourceTrigger=PropertyChanged}" 
+                                 PreviewTextInput="isInputValidNumber" Width="60" Height="30" Margin="5"/>
+                        <Button Content="Apply" Width="80" Height="30" Margin="10 0" Command="{Binding ApplyPositionCommand}" />
+                    </StackPanel>
                 </StackPanel>
 
-                <!-- Buttons -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 15">
-                    <Button Content="Reconnect" Width="130" Margin="10" Command="{Binding ReconnectCommand}" IsEnabled="True" />
-                  
-                </StackPanel>
-                <TextBlock Text="{Binding ActualHydrophonePosition, UpdateSourceTrigger= PropertyChanged}" HorizontalAlignment="Center"
-                           Foreground="GreenYellow"/>
-
-                <!-- Position Input -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Hydrophone Position (X, Y, Z):" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Text="{Binding HydrophoneX, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber"  Width="50" Margin="5" />
-                    <TextBox Text="{Binding HydrophoneY, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber" Width="50" Margin="5" />
-                    <TextBox Text="{Binding HydrophoneZ, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber" Width="50" Margin="5" />
-                    <Button Content="Apply" Margin="10 0" Command="{Binding ApplyPositionCommand}" />
-                </StackPanel>
-
-                <!-- Merd Name -->
-                <TextBlock Text="{Binding MerdName}" Foreground="Gray" FontSize="12" HorizontalAlignment="Center" Margin="0 15 0 0"/>
             </StackPanel>
         </Border>
     </Grid>
