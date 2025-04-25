@@ -11,14 +11,14 @@
     <Window.Resources>
 
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="MerdsWindows2">
         
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-                <elsys:SingleMerdView x:Name="firstMerd"></elsys:SingleMerdView>
-
-
+        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="MerdsWindows" Orientation="Horizontal"/>
+        </ScrollViewer>
 
     </Grid>
 </Window>

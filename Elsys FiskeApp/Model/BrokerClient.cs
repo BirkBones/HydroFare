@@ -30,6 +30,8 @@ public class BrokerClient : ViewModelBase
 
     public event Action? ConnectionStateChanged;
 
+    //public Action<Vector3> positionChanged; // how we control what happens when input is recieved.
+    public Action<MqttApplicationMessageReceivedEventArgs> handleMessages;
     public MqttClientConnectionStatus _connectionStatus { set;  get; } = MqttClientConnectionStatus.Disconnected;
 
     public MqttClientConnectionStatus ConnectionStatus
@@ -45,7 +47,6 @@ public class BrokerClient : ViewModelBase
     public BrokerClient(MerdSettings settings)
     {
         setBrokerSetttings(settings);
-        ConnectToBroker();
         inputData = new Queue<updateData>();
         
     }
@@ -164,12 +165,8 @@ public class BrokerClient : ViewModelBase
     {
         string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
         Debug.WriteLine($"Received message on topic '{e.ApplicationMessage.Topic}': {payload}");
-        if (e.ApplicationMessage.Topic == "rawData") // Uploads the data to the inputdata queue.
-        {
-            var inputList = interpretInput(payload);
-            inputList.ForEach(input => inputData.Enqueue(input));
-        }
 
+        handleMessages?.Invoke(e);
 
         return Task.CompletedTask;
     }
@@ -180,7 +177,7 @@ public class BrokerClient : ViewModelBase
         await Task.CompletedTask;
     }
 
-    List<updateData> interpretInput(string input) // currently assumes format "(x1,y1), (x2, y2), ..."
+    public List<updateData> interpretRawData(string input) // currently assumes format "(x1,y1), (x2, y2), ..."
     {
         var totalInput = input // totalInput consists of multiple updatedata gathered over time.
             .Split(new[] { "), " }, StringSplitOptions.RemoveEmptyEntries)
@@ -194,6 +191,13 @@ public class BrokerClient : ViewModelBase
             .ToList();
         return totalInput;
       
+    }
+    public Vector3 interpretHydrophonePosition(string input)
+    {
+        var shorted = input.Trim('(',')');
+        var parts = shorted.Split(',');
+        var output = new Vector3() { X = float.Parse(parts[0]), Y = float.Parse(parts[1]), Z = float.Parse(parts[2]) };
+        return output;
     }
 
 

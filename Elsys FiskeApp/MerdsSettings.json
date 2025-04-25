@@ -1,8 +1,29 @@
 [
   {
     "Port": 1883,
-    "Ip": "192.168.68.62",
+    "Ip": "10.22.173.124",
     "MerdName": "Merd1",
+    "Radius": 10,
+    "Height": 50
+  },
+  {
+    "Port": 1883,
+    "Ip": "10.22.173.124",
+    "MerdName": "Merd2",
+    "Radius": 10,
+    "Height": 50
+  },
+  {
+    "Port": 1883,
+    "Ip": "10.22.173.124",
+    "MerdName": "Merd3",
+    "Radius": 10,
+    "Height": 50
+  },
+  {
+    "Port": 1883,
+    "Ip": "10.22.173.124",
+    "MerdName": "Merd4",
     "Radius": 10,
     "Height": 50
   }

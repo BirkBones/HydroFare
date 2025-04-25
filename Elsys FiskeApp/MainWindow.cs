@@ -11,6 +11,7 @@ using Elsys_FiskeApp.ViewModel;
 using OxyPlot.Axes;
 using Elsys_FiskeApp.Model;
 using MQTTnet.Protocol;
+using System.Windows.Controls;
 
 namespace Elsys_FiskeApp
 {
@@ -43,18 +44,19 @@ namespace Elsys_FiskeApp
 
             foreach (var merd in merdsHandler.Merds)
             {
+                var merdViewModel = new SingleMerdViewModel(merd.Value);
+                var merdView = new SingleMerdView();
+                merdView.DataContext = merdViewModel;
+                MerdsWindows.Children.Add(merdView);
 
             }
 
 
-            await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
-            await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("actualHydrophonePlacement", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
+            //await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
+            //await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("actualHydrophonePlacement", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
 
             GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
             GlobalUpdateTimer.Start();
-
-            merdViewModel = new SingleMerdViewModel(merdsHandler.Merds["Merd1"]);
-            firstMerd.DataContext = merdViewModel;
 
         }
         /* Det som skjer: når man tilegner new viewmodel is view.cs, blir dette den opprinnelige datakonteksten.

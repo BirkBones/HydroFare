@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
 using MQTTnet;
+using MQTTnet.Protocol;
+using System.Diagnostics;
 
 namespace Elsys_FiskeApp.Model
 {
@@ -43,18 +45,52 @@ namespace Elsys_FiskeApp.Model
         public Vector3 position
         {
             get { return _position; }
-            set { _position = value; }
+            set { _position = value; statusVariablesChanged?.Invoke(); }
         }
-    
         public SingleMerdModel(MerdSettings settings)
         {
             Radius = settings.Radius;
             Height = settings.Height;
             MerdName = settings.MerdName;
             brokerClient = new BrokerClient(settings);
+            //brokerClient.positionChanged += (newPos) => { position = newPos; };
+
+
+            brokerClient.handleMessages += handleMessagesRecieved;
+            AttemptConnection();
+
         }
 
-    
+        public void handleMessagesRecieved (MqttApplicationMessageReceivedEventArgs e)
+        {
+            string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+            {
+                if (e.ApplicationMessage.Topic == MerdName + "/rawData") // Uploads the data to the inputdata queue.
+                {
+                    var inputList = brokerClient.interpretRawData(payload);
+                    inputList.ForEach(input => brokerClient.inputData.Enqueue(input));
+                }
+                else if (e.ApplicationMessage.Topic == MerdName + "/actualHydrophonePlacement") // when recieved the actual position.
+                {
+                    var pos = brokerClient.interpretHydrophonePosition(payload);
+                    position = pos;
+                }
+            };
+        }
+
+        public async void PublishWantedPosition(Vector3 position)
+        {
+            string message = "(" + position.X.ToString() + ", " + position.Y.ToString() + ", " + position.Z.ToString() + ")";
+            await brokerClient.PublishMessage(MerdName + "/wantedHydrophonePlacement", message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
+
+        }
+        public async void AttemptConnection()
+        {
+            await brokerClient.ConnectToBroker();
+            await brokerClient.Subscribe(MerdName + "/rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
+            await brokerClient.Subscribe(MerdName + "/actualHydrophonePlacement", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
+        }
+
 
     }
 }

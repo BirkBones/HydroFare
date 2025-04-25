@@ -41,13 +41,15 @@
                     <Button Content="Reconnect" Width="130" Margin="10" Command="{Binding ReconnectCommand}" IsEnabled="True" />
                   
                 </StackPanel>
+                <TextBlock Text="{Binding ActualHydrophonePosition, UpdateSourceTrigger= PropertyChanged}" HorizontalAlignment="Center"
+                           Foreground="GreenYellow"/>
 
                 <!-- Position Input -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Hydrophone Position (X, Y, Z):" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
                     <TextBox Text="{Binding HydrophoneX, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber"  Width="50" Margin="5" />
-                    <TextBox Text="{Binding HydrophoneY, UpdateSourceTrigger = PropertyChanged}" Width="50" Margin="5" />
-                    <TextBox Text="{Binding HydrophoneZ, UpdateSourceTrigger = PropertyChanged}" Width="50" Margin="5" />
+                    <TextBox Text="{Binding HydrophoneY, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber" Width="50" Margin="5" />
+                    <TextBox Text="{Binding HydrophoneZ, UpdateSourceTrigger = PropertyChanged}" PreviewTextInput="isInputValidNumber" Width="50" Margin="5" />
                     <Button Content="Apply" Margin="10 0" Command="{Binding ApplyPositionCommand}" />
                 </StackPanel>
 

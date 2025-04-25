@@ -86,6 +86,16 @@ namespace Elsys_FiskeApp.ViewModel
             set { _hydrophoneZ = value; OnPropertyChanged(); }
         }
         #endregion hydroPos
+        public string ActualHydrophonePosition
+        {
+            get 
+            { 
+                var result = "(" + merdModel.position.X.ToString() + ", " +merdModel.position.Y.ToString() 
+                    + ", " + merdModel.position.Z.ToString() + ")";
+                return result;
+                    
+            }
+        }
         
         public RelayCommand ReconnectCommand { get; set; }
         public RelayCommand ApplyPositionCommand { get; set; }
@@ -98,31 +108,19 @@ namespace Elsys_FiskeApp.ViewModel
                 OnPropertyChanged(nameof(MerdName));
                 OnPropertyChanged(nameof(ConnectionStatus));
                 OnPropertyChanged(nameof(WellbeingStatus));
+                OnPropertyChanged(nameof(ActualHydrophonePosition));
             };
 
-                TrendPlotViewModel = new SinglePlotViewModel("Trend", new LinearAxis { Position = AxisPosition.Bottom, Key = "xAxis" }, "Time / s", "Events per second");
+            TrendPlotViewModel = new SinglePlotViewModel("Trend", new LinearAxis { Position = AxisPosition.Bottom, Key = "xAxis" }, "Time / s", "Events per second");
             RawPlotViewModel = new SinglePlotViewModel("Raw Signal", new LinearAxis { Position = AxisPosition.Bottom, Key = "xAxis" }, "Time / s", "Volume");
             FourierPlotViewModel = new SinglePlotViewModel("Fourier Transform", new LogarithmicAxis { Position = AxisPosition.Bottom, Key = "xAxis" }, "Frequency / f", "Fourier");
             
-            ReconnectCommand = new RelayCommand(execute => AttemptConnection(), canexecute => shouldConnect() );
-            ApplyPositionCommand = new RelayCommand(execute => updatePosition(), canExecute => shouldSendPosition());
+            ReconnectCommand = new RelayCommand(execute => merdModel.AttemptConnection(), canexecute => shouldConnect() );
+            ApplyPositionCommand = new RelayCommand(execute => merdModel.PublishWantedPosition(new Vector3 { X = float.Parse(HydrophoneX), 
+                Y = float.Parse(HydrophoneY), Z = float.Parse(HydrophoneZ) }), canExecute => shouldSendPosition());
 
 
             DataHolder.Instance.GlobalUpdateTimer.Tick += (sender, e) => updatePlots();
-        }
-        async Task AttemptConnection()
-        {
-            await merdModel.brokerClient.ConnectToBroker();
-            await merdModel.brokerClient.Subscribe("rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
-
-        }
-        void updatePosition() // if position cannot be sent, it will be sent the next time the brokerclient is connected.
-        {
-            
-            merdModel.position = new Vector3 { X = float.Parse(HydrophoneX), Y = float.Parse(HydrophoneY), Z = float.Parse(HydrophoneZ) };
-            string message = "(" + HydrophoneX + ", " + HydrophoneY + ", " + HydrophoneZ + ")";
-            merdModel.brokerClient.PublishMessage("wantedHydrophonePlacement", message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
-            
         }
 
         bool shouldConnect()
