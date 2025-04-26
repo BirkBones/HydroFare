@@ -11,14 +11,21 @@
     <Window.Resources>
 
     </Window.Resources>
-    <Grid x:Name="MerdsWindows2">
-        
+    <Grid x:Name="HydrofareWindow">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="70*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+        <!--<StackPanel x:Name="MerdsSummary" Background="Gray"/> -->
+        <elsys:MerdOverviewView Grid.Column="0" x:Name="merdOverviewView"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Column="1">
             <StackPanel x:Name="MerdsWindows" Orientation="Horizontal"/>
         </ScrollViewer>
+
+        
 
     </Grid>
 </Window>

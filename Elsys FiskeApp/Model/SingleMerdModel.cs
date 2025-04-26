@@ -21,10 +21,11 @@ namespace Elsys_FiskeApp.Model
         private string _merdName;
 		private float _radius;
 		private float _height;
-        private string _wellbeingStatus = "Unknown";
+        private Wellfare _wellbeingStatus = Wellfare.UnKnown;
         public Vector3 _position = new Vector3() { X = 0, Y = 0, Z = 0 };
         public BrokerClient brokerClient;
         public Action statusVariablesChanged;
+        public static Dictionary<string, Wellfare> MerdStates;
         public string MerdName
 		{
 			get { return _merdName; }
@@ -36,7 +37,7 @@ namespace Elsys_FiskeApp.Model
 
 		public float Height { get { return _height; } set {_height = value; } }
   
-        public string WellbeingStatus
+        public Wellfare WellbeingStatus
         {
             get => _wellbeingStatus;
             set { _wellbeingStatus = value; statusVariablesChanged?.Invoke(); }
@@ -58,6 +59,7 @@ namespace Elsys_FiskeApp.Model
 
             brokerClient.handleMessages += handleMessagesRecieved;
             AttemptConnection();
+            if (MerdStates == null) MerdStates = new Dictionary<string, Wellfare>();
 
         }
 

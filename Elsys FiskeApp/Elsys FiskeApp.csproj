@@ -10,11 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BadWelfareSound.wav" />
     <None Remove="Model\ClientConnectionSettings.json" />
     <None Remove="Model\ClientsConnectionSettings.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="BadWelfareSound.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MerdsSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -26,11 +30,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OxyPlot.Core" Version="2.2.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModel\" />
-    <Folder Include="View\" />
   </ItemGroup>
 
 </Project>

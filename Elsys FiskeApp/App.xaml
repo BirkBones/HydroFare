@@ -5,7 +5,33 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <Color x:Key="BackgroundColor">#0D1B2A</Color>
+        <Color x:Key="PrimaryBorderColor">#3A506B</Color>
+        <Color x:Key="InputBackgroundColor">#1F2A38</Color>
+        <Color x:Key="ButtonBackgroundColor">#3A506B</Color>
+        <Color x:Key="ButtonBorderColor">#5BC0BE</Color>
+        <Color x:Key="InfoPanelBackgroundColor">#132743</Color>
+
+        <Color x:Key="TextColor">White</Color>
+        <Color x:Key="ConnectionStatusColor">LightGreen</Color>
+        <Color x:Key="WellbeingStatusColor">LightBlue</Color>
+        <Color x:Key="PositionColor">LimeGreen</Color>
+
+        <!-- Brushes -->
         <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+        <SolidColorBrush x:Key="PrimaryBorderBrush" Color="{StaticResource PrimaryBorderColor}"/>
+        <SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource InputBackgroundColor}"/>
+        <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="{StaticResource ButtonBackgroundColor}"/>
+        <SolidColorBrush x:Key="ButtonBorderBrush" Color="{StaticResource ButtonBorderColor}"/>
+        <SolidColorBrush x:Key="InfoPanelBackgroundBrush" Color="{StaticResource InfoPanelBackgroundColor}"/>
+
+        <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+        <SolidColorBrush x:Key="ConnectionStatusBrush" Color="{StaticResource ConnectionStatusColor}"/>
+        <SolidColorBrush x:Key="WellbeingStatusBrush" Color="{StaticResource WellbeingStatusColor}"/>
+        <SolidColorBrush x:Key="PositionBrush" Color="{StaticResource PositionColor}"/>
+        <SolidColorBrush x:Key="LightTextBrush" Color="#B0BEC5"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="LightGreen"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="LightBlue"/>
+
     </Application.Resources>
 
 </Application>

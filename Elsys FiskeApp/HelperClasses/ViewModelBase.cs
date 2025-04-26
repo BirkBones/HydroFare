@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Elsys_FiskeApp
 {
-    public class ViewModelBase : UIElement, INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

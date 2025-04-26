@@ -1,0 +1,23 @@
+﻿<Window x:Class="Elsys_FiskeApp.View.WarningWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Warning"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="#88FF0000"
+        Topmost="True"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Width="800" Height="600" 
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="⚠️ Dangerous activity registered!" 
+                       Foreground="White" 
+                       FontSize="48" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -20,10 +20,10 @@ namespace Elsys_FiskeApp
     /// </summary>
     /// 
 
-   
+
     public partial class MainWindow : Window
     {
-        
+
         public static DispatcherTimer GlobalUpdateTimer = new DispatcherTimer();
         DataHolder dataHolder = new DataHolder();
         MerdsHandler merdsHandler;
@@ -33,7 +33,7 @@ namespace Elsys_FiskeApp
             InitializeComponent();
             InitializeAsync();
 
-            return; 
+            return;
         }
         async void InitializeAsync()
         {
@@ -42,28 +42,32 @@ namespace Elsys_FiskeApp
                 merdsHandler = new MerdsHandler();
             });
 
+            var merds = new ObservableCollection<SingleMerdViewModel>();
             foreach (var merd in merdsHandler.Merds)
             {
+                // Initialize main views (horizontal)
                 var merdViewModel = new SingleMerdViewModel(merd.Value);
                 var merdView = new SingleMerdView();
                 merdView.DataContext = merdViewModel;
                 MerdsWindows.Children.Add(merdView);
+                //Initialize summary (vertical)
+                //var simplifiedMerdView = new SimplifiedSingleMerdView();
+                //simplifiedMerdView.DataContext = merdViewModel;
+
+                merds.Add(merdViewModel);
 
             }
+            var merdOverviewViewmodel = new MerdOverviewViewmodel(merds, 30, 250);
+            merdOverviewView.DataContext = merdOverviewViewmodel;
 
-
-            //await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("rawData", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
-            //await merdsHandler.Merds["Merd1"].brokerClient.Subscribe("actualHydrophonePlacement", MqttQualityOfServiceLevel.ExactlyOnce, CancellationToken.None);
 
             GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
             GlobalUpdateTimer.Start();
 
+
         }
-        /* Det som skjer: når man tilegner new viewmodel is view.cs, blir dette den opprinnelige datakonteksten.
-         Dersom man prøver å erstatte denne, erstatter man den, men det originale objektet blir ikke ødelagt og lager et krasj.
-        Grunnen til at det ikke blir ødelagt er at det subscriber på ting, og de må desubscribes før objektet blir avinstansiert.
-        I tillegg blir det nye objektet ikke bindet opp korrekt til viewen, */
-    }
+
 
     }
+}
 

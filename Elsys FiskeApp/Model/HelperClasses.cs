@@ -32,5 +32,9 @@ public struct MerdSettings
 
         public MerdSettings() { } // Needed for deserialization
     }
-
+public enum Wellfare
+    {
+        Good = 0, Bad = 1, Suspicious = 2, UnKnown = 3
+        
+    }
 }
