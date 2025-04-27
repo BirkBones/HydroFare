@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        
+
 
         <!-- Toggle Button -->
         <Button x:Name="toggleBar"
@@ -33,7 +33,7 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Right"
                 />
-    
+
         <!-- Header -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" 
                     VerticalAlignment="Center" Margin="20,10">
@@ -43,7 +43,7 @@
                HorizontalAlignment="Right"
                Foreground="{StaticResource LightTextBrush}"/>
         </StackPanel>
-        
+
         <!-- Scrollable Merd Cards -->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="1" Padding="10" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding MerdViews}" >
@@ -83,5 +83,51 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        <Button Grid.Row="0" Grid.Column="0"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        Margin="10"
+        Padding="10,5"
+        Width="120" Height="40"
+        Content="Alarm: on / off"
+        Command="{Binding ChangeWarningNotification}"
+        Background="{StaticResource ButtonBackgroundBrush}"
+        Foreground="{StaticResource LightTextBrush}"
+        BorderBrush="{StaticResource ButtonBackgroundBrush}"
+        BorderThickness="2"
+        FontSize="14"
+        FontWeight="SemiBold"
+        Cursor="Hand"
+        >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="{StaticResource ButtonBackgroundBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource LightTextBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource ButtonBackgroundBrush}" />
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource ButtonBackgroundBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
 </UserControl>

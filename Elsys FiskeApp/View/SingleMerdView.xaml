@@ -153,7 +153,7 @@
                Margin="0 0 8 0" 
                Grid.Column="3"
                FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding WellbeingStatus}" 
+                    <TextBlock Text="{Binding WellbeingStatus, UpdateSourceTrigger=PropertyChanged}" 
                Foreground="{StaticResource InfoBrush}" 
                FontSize="16" 
                VerticalAlignment="Center" 
@@ -171,7 +171,7 @@
 
                 <!-- Target Inputs -->
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <TextBlock Text="Target Hydrophone Position (X, Y, Z):" FontSize="14" HorizontalAlignment="Center" Margin="0 0 5 5"/>
+                    <TextBlock Text="Target Hydrophone Position (r, θ, h):" FontSize="14" HorizontalAlignment="Center" Margin="0 0 5 5"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBox Text="{Binding HydrophoneX, UpdateSourceTrigger=PropertyChanged}" 
                                  PreviewTextInput="isInputValidNumber" Width="60" Height="30" Margin="5"/>

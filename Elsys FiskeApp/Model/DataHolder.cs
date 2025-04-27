@@ -16,7 +16,7 @@ namespace Elsys_FiskeApp.Model
         public Dictionary<string, List<updateData>> totalProcessedData; // the same, but holds all accumulated data during runtime.
         
         public DispatcherTimer GlobalUpdateTimer { get; private set; } =
-                    new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(2000) };// Global timer
+                    new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };// Global timer
         public DataHolder() 
         {
             if (Instance == null)
@@ -60,8 +60,8 @@ namespace Elsys_FiskeApp.Model
         private updateData processData(updateData rawInput)
         {
             // Do things with the data here.
-            rawInput.FourierData = rawInput.RawData*rawInput.RawData*rawInput.RawData; // temporary solution so they're not null.
-            rawInput.TreatedSignal = -rawInput.RawData * rawInput.RawData;
+            //rawInput.FourierData = rawInput.RawData*rawInput.RawData*rawInput.RawData; // temporary solution so they're not null.
+            //rawInput.TreatedSignal = -rawInput.RawData * rawInput.RawData;
             return rawInput;
         }
     }

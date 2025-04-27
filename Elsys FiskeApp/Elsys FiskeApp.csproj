@@ -11,23 +11,51 @@
 
   <ItemGroup>
     <None Remove="BadWelfareSound.wav" />
-    <None Remove="fft_data.csv" />
+    <None Remove="Data\fft_data\feeding_fft_no_stress.csv" />
+    <None Remove="Data\fft_data\fft_noFeeding_no_stress.csv" />
+    <None Remove="Data\fft_data\fft_noFeeding_with_stress.csv" />
+    <None Remove="Data\signal_data\signal_Feeding_no_stress.csv" />
+    <None Remove="Data\signal_data\signal_noFeeding_no_stress.csv" />
+    <None Remove="Data\signal_data\signal_noFeeding_with_stress.csv" />
+    <None Remove="Data\true_false_dat\bool_feeding_no_stress.csv" />
+    <None Remove="Data\true_false_dat\bool_noFeeding_no_stress.csv" />
+    <None Remove="Data\true_false_dat\bool_noFeeding_with_stress.csv" />
     <None Remove="Model\ClientConnectionSettings.json" />
     <None Remove="Model\ClientsConnectionSettings.json" />
-    <None Remove="signal_data.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="BadWelfareSound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="fft_data.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Data\fft_data\feeding_fft_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\fft_data\fft_noFeeding_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\fft_data\fft_noFeeding_with_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\signal_data\signal_Feeding_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\signal_data\signal_noFeeding_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\signal_data\signal_noFeeding_with_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\true_false_dat\bool_feeding_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\true_false_dat\bool_noFeeding_no_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\true_false_dat\bool_noFeeding_with_stress.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="MerdsSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="signal_data.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -17,6 +17,7 @@ using MQTTnet.Exceptions;
 using System.Data;
 using System.Windows.Input;
 using Elsys_FiskeApp.Model;
+using System.IO;
 
 namespace MQTTnet;
 
@@ -27,6 +28,7 @@ public class BrokerClient : ViewModelBase
     public string brokerName;
     public string ip { get; set; }
     int port;
+    bool fishHeathIsGood = true;
 
     public event Action? ConnectionStateChanged;
 
@@ -42,13 +44,14 @@ public class BrokerClient : ViewModelBase
 
     public CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-    public Queue<Elsys_FiskeApp.updateData> inputData; // Contains all input for the given brokerclient.
+    public Queue<updateData> inputData; // Contains all input for the given brokerclient.
 
     public BrokerClient(MerdSettings settings)
     {
         setBrokerSetttings(settings);
         inputData = new Queue<updateData>();
         
+
     }
     ~BrokerClient() // should fix this to implement idisposable, so it actually waits for it to disconnect.
     {
@@ -65,8 +68,8 @@ public class BrokerClient : ViewModelBase
 
     public async Task AbortConnectionAttempt()
     {
-        await Task.Run(()=>cancellationTokenSource.Cancel()); // if there is one, cancels the ongoing connection attempt.
-        cancellationTokenSource = new CancellationTokenSource();
+        //await Task.Run(()=>cancellationTokenSource.Cancel()); // if there is one, cancels the ongoing connection attempt.
+        //cancellationTokenSource = new CancellationTokenSource();
     }
     public async Task ConnectToBroker() // Returns the result of the connection
     {

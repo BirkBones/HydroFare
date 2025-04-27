@@ -1,4 +1,7 @@
-﻿namespace Elsys_FiskeApp
+﻿using CsvHelper.Configuration.Attributes;
+using OxyPlot;
+
+namespace Elsys_FiskeApp
 {
     public struct Tuple<T1, T2>
     {
@@ -9,11 +12,18 @@
 
     public struct updateData
     {
-        public float TreatedSignal;
-        public float FourierData;
-        public float RawData;
-        public float Time;
-        public updateData(float treatedSignal, float fourierData, float rawData, float time) { TreatedSignal = treatedSignal; FourierData = fourierData; RawData = rawData; Time = time; }
+        [Name("filtered_data")] 
+        public float TreatedSignal { get; set; }
+        [Name("ffts")]
+        public List<DataPoint> FourierData { get; set; }
+        [Name("raw_data")]
+        public float RawData {  get; set; }    
+        public float Time {  get; set; }
+        [Name("stress")]
+        public bool IsHealthGood { get; set; }
+        public updateData(float treatedSignal, List<DataPoint> fourierData, float rawData, float time) { TreatedSignal = treatedSignal; FourierData = fourierData; RawData = rawData; Time = time; }
+        
+    
     }
 
 public struct MerdSettings

@@ -12,6 +12,7 @@ using OxyPlot.Axes;
 using Elsys_FiskeApp.Model;
 using MQTTnet.Protocol;
 using System.Windows.Controls;
+using CsvHelper;
 
 namespace Elsys_FiskeApp
 {
@@ -63,6 +64,12 @@ namespace Elsys_FiskeApp
 
             GlobalUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
             GlobalUpdateTimer.Start();
+
+            //string fourierPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\fft_data\" + "feeding_fft_no_stress.csv");
+            //string signalpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\signal_data\" + "signal_Feeding_no_stress.csv");
+            //string wellbeingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\true_false_dat\" + "bool_feeding_no_stress.csv");
+            //var fakeClient = new FakeSender(signalpath, fourierPath, wellbeingPath);
+
 
 
         }

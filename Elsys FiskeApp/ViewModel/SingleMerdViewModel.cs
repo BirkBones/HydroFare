@@ -24,13 +24,7 @@ namespace Elsys_FiskeApp.ViewModel
         {
             get {
                
-                if (merdModel.brokerClient.ConnectionStatus == MQTTnet.MqttClientConnectionStatus.Connected) return "Connected";
-                else
-                {
-                    if (merdModel.brokerClient.ConnectionStatus == MQTTnet.MqttClientConnectionStatus.Disconnecting) return "Attempting Connection";
-                }
-                
-                return "Disconnected";
+                return merdModel.brokerClient.ConnectionStatus.ToString();
 
             }
 
@@ -140,13 +134,13 @@ namespace Elsys_FiskeApp.ViewModel
         }
         bool shouldSendPosition() // returns true if position is within bounds and the brokerclient is connected.
         {
-            if (HydrophoneZ == "-" || HydrophoneY == "-" || HydrophoneX == "-") return false;
             if (HydrophoneX != "" && HydrophoneY != "" && HydrophoneZ != "" && merdModel.brokerClient.ConnectionStatus == MqttClientConnectionStatus.Connected)
             {
                 if (float.Parse(HydrophoneX) == merdModel.position.X && float.Parse(HydrophoneY) == merdModel.position.Y && float.Parse(HydrophoneZ) == merdModel.position.Z) return false;
-                var distance = Math.Pow(Math.Pow(float.Parse(HydrophoneX), 2) + Math.Pow(float.Parse(HydrophoneY), 2), 0.5);
-                var height = float.Parse(HydrophoneZ);
-                if (distance <= merdModel.Radius && height <= merdModel.Height) return true; // if input is within bounds
+                //var distance = Math.Pow(Math.Pow(float.Parse(HydrophoneX), 2) + Math.Pow(float.Parse(HydrophoneY), 2), 0.5);
+                //var height = float.Parse(HydrophoneZ);
+                //if (distance <= merdModel.Radius && height <= merdModel.Height) return true; // if input is within bounds
+                if (float.Parse(HydrophoneX) <= 400 && float.Parse(HydrophoneY) <= 360 && float.Parse(HydrophoneZ) <= 800) return true;
             }
             
             return false;
@@ -157,7 +151,7 @@ namespace Elsys_FiskeApp.ViewModel
             var plottingData = DataHolder.Instance.newProcessedData[merdModel.MerdName].ToList();
 
             updateSpecificPlot(plottingData, TrendPlotViewModel, data => data.TreatedSignal);
-            updateSpecificPlot(plottingData, FourierPlotViewModel, data => data.FourierData);
+            updateFourierPlot(plottingData, FourierPlotViewModel);
             updateSpecificPlot(plottingData, RawPlotViewModel, data => data.RawData);
 
             DataHolder.Instance.newProcessedData[merdModel.MerdName].Clear();
@@ -167,6 +161,13 @@ namespace Elsys_FiskeApp.ViewModel
         {
             List<DataPoint> points = updateDataList.Select(data => new DataPoint(data.Time, valueSelector(data))).ToList();
             plotModel.addPoints(points);
+        }
+        void updateFourierPlot(List<updateData> updateDataList, SinglePlotViewModel plotModel)
+        {
+            if (updateDataList.Count > 0)
+            {
+                plotModel.SetPoints(updateDataList[0].FourierData);
+            }
         }
 
 

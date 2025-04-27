@@ -13,6 +13,7 @@ using System.Windows;
 using MQTTnet;
 using MQTTnet.Protocol;
 using System.Diagnostics;
+using System.IO;
 
 namespace Elsys_FiskeApp.Model
 {
@@ -25,6 +26,7 @@ namespace Elsys_FiskeApp.Model
         public Vector3 _position = new Vector3() { X = 0, Y = 0, Z = 0 };
         public BrokerClient brokerClient;
         public Action statusVariablesChanged;
+        public Action<string> criticalEvent;
         public static Dictionary<string, Wellfare> MerdStates;
         public string MerdName
 		{
@@ -40,7 +42,13 @@ namespace Elsys_FiskeApp.Model
         public Wellfare WellbeingStatus
         {
             get => _wellbeingStatus;
-            set { _wellbeingStatus = value; statusVariablesChanged?.Invoke(); }
+            set { 
+                if (_wellbeingStatus != value)
+                {
+                    _wellbeingStatus = value; statusVariablesChanged?.Invoke();
+                    if (value == Wellfare.Bad) criticalEvent?.Invoke(MerdName);
+                }
+            }
         }
 
         public Vector3 position
@@ -48,6 +56,8 @@ namespace Elsys_FiskeApp.Model
             get { return _position; }
             set { _position = value; statusVariablesChanged?.Invoke(); }
         }
+
+        bool lastState;
         public SingleMerdModel(MerdSettings settings)
         {
             Radius = settings.Radius;
@@ -60,7 +70,58 @@ namespace Elsys_FiskeApp.Model
             brokerClient.handleMessages += handleMessagesRecieved;
             AttemptConnection();
             if (MerdStates == null) MerdStates = new Dictionary<string, Wellfare>();
+            StartShowcase();
+        }
 
+        void StartShowcase()
+        {
+            if (MerdName == "Merd1")
+            {
+                string fourierPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\fft_data\" + "feeding_fft_no_stress.csv");
+                string signalpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\signal_data\" + "signal_Feeding_no_stress.csv");
+                string wellbeingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\true_false_dat\" + "bool_feeding_no_stress.csv");
+                var fakeClient = new FakeSender(signalpath, fourierPath, wellbeingPath);
+                fakeClient.currentUpdateChanged += () =>
+                {
+                    brokerClient.inputData.Enqueue(fakeClient.currentUpdate);
+                    WellbeingStatus = fakeClient.currentUpdate.IsHealthGood ? Wellfare.Good : Wellfare.Bad;
+                    //if (lastState != fakeClient.currentUpdate.IsHealthGood && lastState!=null) System.Diagnostics.Debugger.Break();
+                    lastState = fakeClient.currentUpdate.IsHealthGood;
+
+                };
+
+
+            }
+            if (MerdName =="Merd2")
+            {
+                string fourierPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\fft_data\" + "fft_noFeeding_no_stress.csv");
+                string signalpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\signal_data\" + "signal_noFeeding_no_stress.csv");
+                string wellbeingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\true_false_dat\" + "bool_noFeeding_no_stress.csv");
+                var fakeClient = new FakeSender(signalpath, fourierPath, wellbeingPath);
+                fakeClient.currentUpdateChanged += () =>
+                {
+                    brokerClient.inputData.Enqueue(fakeClient.currentUpdate);
+                    WellbeingStatus = fakeClient.currentUpdate.IsHealthGood ? Wellfare.Good : Wellfare.Bad;
+                    //if (lastState != fakeClient.currentUpdate.IsHealthGood && lastState!=null) System.Diagnostics.Debugger.Break();
+                    lastState = fakeClient.currentUpdate.IsHealthGood;
+
+                };
+            }
+            if (MerdName == "Merd3")
+            {
+                string fourierPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\fft_data\" + "fft_noFeeding_with_stress.csv");
+                string signalpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\signal_data\" + "signal_noFeeding_with_stress.csv");
+                string wellbeingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\true_false_dat\" + "bool_noFeeding_with_stress.csv");
+                var fakeClient = new FakeSender(signalpath, fourierPath, wellbeingPath);
+                fakeClient.currentUpdateChanged += () =>
+                {
+                    brokerClient.inputData.Enqueue(fakeClient.currentUpdate);
+                    WellbeingStatus = fakeClient.currentUpdate.IsHealthGood ? Wellfare.Good : Wellfare.Bad;
+                    //if (lastState != fakeClient.currentUpdate.IsHealthGood && lastState!=null) System.Diagnostics.Debugger.Break();
+                    lastState = fakeClient.currentUpdate.IsHealthGood;
+
+                };
+            }
         }
 
         public void handleMessagesRecieved (MqttApplicationMessageReceivedEventArgs e)
