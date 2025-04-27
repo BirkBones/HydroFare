@@ -140,7 +140,7 @@ namespace Elsys_FiskeApp.ViewModel
         }
         bool shouldSendPosition() // returns true if position is within bounds and the brokerclient is connected.
         {
-
+            if (HydrophoneZ == "-" || HydrophoneY == "-" || HydrophoneX == "-") return false;
             if (HydrophoneX != "" && HydrophoneY != "" && HydrophoneZ != "" && merdModel.brokerClient.ConnectionStatus == MqttClientConnectionStatus.Connected)
             {
                 if (float.Parse(HydrophoneX) == merdModel.position.X && float.Parse(HydrophoneY) == merdModel.position.Y && float.Parse(HydrophoneZ) == merdModel.position.Z) return false;

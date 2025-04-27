@@ -1,59 +1,87 @@
 ﻿<UserControl x:Class="Elsys_FiskeApp.View.MerdOverviewView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Elsys_FiskeApp.View"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="{StaticResource InfoPanelBackgroundBrush}" Width="{Binding WindowWidth}">
+    <Grid Background="{StaticResource InfoPanelBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding WindowWidth, UpdateSourceTrigger=PropertyChanged}"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Overview"
-               Grid.Row="0" Grid.Column="0"
-               FontSize="28" 
-               FontWeight="Bold"
-               Foreground="{StaticResource LightTextBrush}"
-               VerticalAlignment="Center"
-               />
+        
 
+        <!-- Toggle Button -->
         <Button x:Name="toggleBar"
-            Grid.Row="0" Grid.Column="1"
-            Content=">"
-            Width="30" Height="30"
-            Margin="10,0,0,0"
-            Command="{Binding ToggleMenuBar}"
-            VerticalAlignment="Center"
-            />
+                Grid.Row="0" Grid.Column="1"
+                Content="☰"
+                Width="40" Height="40"
+                Margin="10"
+                FontSize="20"
+                Command="{Binding ToggleMenuBar}"
+                Background="{StaticResource ButtonBackgroundBrush}"
+                Foreground="{StaticResource LightTextBrush}"
+                BorderBrush="{x:Null}"
+                Cursor="Hand"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                />
+    
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" 
+                    VerticalAlignment="Center" Margin="20,10">
+            <TextBlock Text="Overview"
+               FontSize="32"
+               FontWeight="Bold"
+               HorizontalAlignment="Right"
+               Foreground="{StaticResource LightTextBrush}"/>
+        </StackPanel>
+        
+        <!-- Scrollable Merd Cards -->
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="1" Padding="10" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding MerdViews}" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
-            <ItemsControl ItemsSource="{Binding MerdViews}" Padding="20">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Padding="10" CornerRadius="5" BorderThickness="5"
-                            BorderBrush="{StaticResource ButtonBackgroundBrush}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="{Binding MerdName}"/>
-                                <TextBlock Grid.Row="1" Text="{Binding ConnectionStatus}"/>
-                                <TextBlock Grid.Row="2" Text="{Binding WellbeingStatus}"/>
-                            </Grid>
+                        <Border Padding="20"
+                                Margin="10"
+                                Width="250"
+                                Height="150"
+                                Background="{StaticResource InfoPanelBackgroundBrush}"
+                                CornerRadius="15"
+                                BorderBrush="{StaticResource ButtonBackgroundBrush}"
+                                BorderThickness="2">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding MerdName}"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource LightTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding ConnectionStatus}"
+                                           FontSize="16"
+                                           Foreground="{StaticResource LightTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding WellbeingStatus}"
+                                           FontSize="16"
+                                           Foreground="{StaticResource LightTextBrush}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
     </Grid>
-
 </UserControl>

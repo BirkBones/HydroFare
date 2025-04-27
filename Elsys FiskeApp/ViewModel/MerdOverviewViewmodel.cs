@@ -22,36 +22,34 @@ namespace Elsys_FiskeApp.ViewModel
         }
         public RelayCommand ToggleMenuBar {  get; set; }
 
-        public bool _isClosed = false;
-        public bool IsClosed
+        public bool _isOpen = true;
+        public bool IsOpen
         {
-            get => _isClosed;
-            set { _isClosed = value; OnPropertyChanged(); }
+            get => _isOpen;
+            set { _isOpen = value; OnPropertyChanged(); }
         }
+        public float _stackPanelWidth;
 
-        float closedValue;
-        float openValue;
-        public MerdOverviewViewmodel(ObservableCollection<SingleMerdViewModel> _merds, float _closedValue, float _openValue)
+        private float _savedOpenValue;
+        public MerdOverviewViewmodel(ObservableCollection<SingleMerdViewModel> _merds, float _openValue)
         {
             _MerdViews = _merds;
             ToggleMenuBar = new RelayCommand((sender) => ToggleWindow());
-            closedValue = _closedValue;
-            openValue = _openValue;
-            WindowWidth = closedValue;
-
-
+            WindowWidth = _openValue;
+            _savedOpenValue = _openValue;
         }
         private void ToggleWindow()
         {
-            if (IsClosed)
+            if (IsOpen)
             {
-                WindowWidth = openValue;
+                WindowWidth = 0;
+
             }
-            else
+            else 
             {
-                WindowWidth = closedValue;
+                WindowWidth = _savedOpenValue;
             }
-            IsClosed = !IsClosed;
+            IsOpen = !IsOpen;
         }
 
        

@@ -57,7 +57,7 @@ namespace Elsys_FiskeApp
                 merds.Add(merdViewModel);
 
             }
-            var merdOverviewViewmodel = new MerdOverviewViewmodel(merds, 30, 250);
+            var merdOverviewViewmodel = new MerdOverviewViewmodel(merds, 300);
             merdOverviewView.DataContext = merdOverviewViewmodel;
 
 

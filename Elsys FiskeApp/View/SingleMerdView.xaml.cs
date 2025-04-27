@@ -17,7 +17,7 @@ namespace Elsys_FiskeApp.View
 
         private void isInputValidNumber(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text != "." && !int.TryParse(e.Text, out _))
+            if (e.Text != "." && e.Text != "-" && !int.TryParse(e.Text, out _))
             {
                 e.Handled = true; // if its a character, dont let it be valid input.
             }
